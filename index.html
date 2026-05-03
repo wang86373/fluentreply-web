@@ -6,9 +6,7 @@
   <title>FluentReply - AI Reply Assistant</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -30,13 +28,16 @@
       color: #2563eb;
     }
 
+    button {
+      font-size: 15px;
+    }
+
     .pro-btn {
       background: #2563eb;
       color: white;
       border: none;
       padding: 12px 20px;
       border-radius: 12px;
-      font-size: 15px;
       cursor: pointer;
       font-weight: 600;
     }
@@ -90,15 +91,11 @@
       flex-wrap: wrap;
     }
 
-    select,
-    button {
-      font-size: 15px;
-    }
-
     select {
       padding: 12px;
       border-radius: 12px;
       border: 1px solid #d1d5db;
+      font-size: 15px;
     }
 
     .generate-btn {
@@ -120,6 +117,19 @@
       white-space: pre-wrap;
       color: #111827;
       border: 1px solid #e5e7eb;
+      line-height: 1.6;
+    }
+
+    .copy-btn {
+      margin-top: 12px;
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      display: none;
     }
 
     .features {
@@ -138,10 +148,6 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.06);
     }
 
-    .feature h3 {
-      margin-top: 0;
-    }
-
     footer {
       text-align: center;
       padding: 40px 20px;
@@ -150,18 +156,9 @@
     }
 
     @media (max-width: 600px) {
-      .hero h1 {
-        font-size: 34px;
-      }
-
-      header {
-        padding: 20px;
-      }
-
-      .card {
-        margin: 20px;
-        padding: 22px;
-      }
+      .hero h1 { font-size: 34px; }
+      header { padding: 20px; }
+      .card { margin: 20px; padding: 22px; }
     }
   </style>
 </head>
@@ -173,16 +170,16 @@
   </header>
 
   <section class="hero">
-    <h1>Write Better Replies<br />in Seconds</h1>
+    <h1>Translate & Write Better Replies<br />in Seconds</h1>
     <p>
-      FluentReply helps you turn simple thoughts into clear, polished,
-      professional English replies instantly.
+      FluentReply helps you translate messages into English and turn them into clear,
+      polished, professional replies instantly.
     </p>
     <button class="pro-btn" onclick="goPro()">Upgrade to Pro — $9.90/month</button>
   </section>
 
   <main class="card">
-    <textarea id="userInput" placeholder="Paste or type the message you want to reply to..."></textarea>
+    <textarea id="userInput" placeholder="输入中文或其他语言内容，我会自动翻译成英文回复..."></textarea>
 
     <div class="controls">
       <select id="tone">
@@ -193,28 +190,30 @@
         <option value="confident">Confident</option>
       </select>
 
-      <button class="generate-btn" onclick="generateReply()">Generate Reply</button>
+      <button class="generate-btn" onclick="generateReply()">Translate & Generate Reply</button>
     </div>
 
     <div id="output" class="output">
-      Your AI reply will appear here.
+      Your translated reply will appear here.
     </div>
+
+    <button id="copyBtn" class="copy-btn" onclick="copyReply()">Copy Reply</button>
   </main>
 
   <section class="features">
     <div class="feature">
-      <h3>Fast Replies</h3>
-      <p>Create polished responses instantly for work, business, dating, customer messages, and daily conversations.</p>
+      <h3>Auto Translation</h3>
+      <p>Translate Chinese or other languages into clear English automatically.</p>
     </div>
 
     <div class="feature">
-      <h3>Multiple Tones</h3>
-      <p>Choose professional, friendly, polite, confident, or short reply styles.</p>
+      <h3>Better Replies</h3>
+      <p>Generate professional, friendly, polite, short, or confident English replies.</p>
     </div>
 
     <div class="feature">
       <h3>Pro Access</h3>
-      <p>Upgrade to Pro for unlimited replies and premium features.</p>
+      <p>Upgrade to Pro for more usage and premium reply styles.</p>
     </div>
   </section>
 
@@ -223,12 +222,11 @@
   </footer>
 
   <script>
-    const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_7sY28t1xF9fe7qb7iY83C00";
-
+    const PAYMENT_LINK = "https://buy.stripe.com/test_7sY28t1xF9fe7qb7iY83C00";
     const FREE_LIMIT = 100;
 
     function goPro() {
-      window.location.href = STRIPE_PAYMENT_LINK;
+      window.location.href = PAYMENT_LINK;
     }
 
     function getUsageCount() {
@@ -239,10 +237,53 @@
       localStorage.setItem("fluentreply_usage", String(count));
     }
 
-    function generateReply() {
+    async function translateToEnglish(text) {
+      const url =
+        "https://api.mymemory.translated.net/get?q=" +
+        encodeURIComponent(text) +
+        "&langpair=auto|en";
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data && data.responseData && data.responseData.translatedText) {
+        return data.responseData.translatedText;
+      }
+
+      throw new Error("Translation failed");
+    }
+
+    function polishReply(translatedText, tone) {
+      if (tone === "professional") {
+        return `Thank you for your message. ${translatedText}`;
+      }
+
+      if (tone === "friendly") {
+        return `Thanks for your message! ${translatedText}`;
+      }
+
+      if (tone === "short") {
+        return translatedText;
+      }
+
+      if (tone === "polite") {
+        return `Thank you very much for your message. ${translatedText}`;
+      }
+
+      if (tone === "confident") {
+        return `I understand. ${translatedText}`;
+      }
+
+      return translatedText;
+    }
+
+    async function generateReply() {
       const input = document.getElementById("userInput").value.trim();
       const tone = document.getElementById("tone").value;
       const output = document.getElementById("output");
+      const copyBtn = document.getElementById("copyBtn");
+
+      copyBtn.style.display = "none";
 
       if (!input) {
         output.textContent = "Please enter a message first.";
@@ -258,24 +299,26 @@
         return;
       }
 
-      usage++;
-      setUsageCount(usage);
+      output.textContent = "Translating and generating reply...";
 
-      let reply = "";
+      try {
+        const translatedText = await translateToEnglish(input);
+        const finalReply = polishReply(translatedText, tone);
 
-      if (tone === "professional") {
-        reply = `Thank you for your message. I appreciate you reaching out. I will review this carefully and get back to you with a clear response as soon as possible.`;
-      } else if (tone === "friendly") {
-        reply = `Thanks for your message! I really appreciate it. I’ll take a look and get back to you soon.`;
-      } else if (tone === "short") {
-        reply = `Thanks. I’ll check and get back to you soon.`;
-      } else if (tone === "polite") {
-        reply = `Thank you very much for your message. I appreciate your time and will respond as soon as I can.`;
-      } else if (tone === "confident") {
-        reply = `Thanks for reaching out. I understand the situation and will handle this clearly and efficiently.`;
+        usage++;
+        setUsageCount(usage);
+
+        output.textContent = finalReply;
+        copyBtn.style.display = "inline-block";
+      } catch (error) {
+        output.textContent = "Translation failed. Please try again.";
       }
+    }
 
-      output.textContent = reply;
+    function copyReply() {
+      const text = document.getElementById("output").textContent;
+      navigator.clipboard.writeText(text);
+      alert("Reply copied!");
     }
   </script>
 </body>
