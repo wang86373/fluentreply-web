@@ -28,9 +28,7 @@
       color: #2563eb;
     }
 
-    button {
-      font-size: 15px;
-    }
+    button { font-size: 15px; }
 
     .pro-btn {
       background: #2563eb;
@@ -80,9 +78,7 @@
       outline: none;
     }
 
-    textarea:focus {
-      border-color: #2563eb;
-    }
+    textarea:focus { border-color: #2563eb; }
 
     .controls {
       display: flex;
@@ -172,17 +168,21 @@
   <section class="hero">
     <h1>Translate & Write Better Replies<br />in Seconds</h1>
     <p>
-      FluentReply helps you translate messages into English and turn them into clear,
-      polished, professional replies instantly.
+      FluentReply automatically translates your message into English and turns it into
+      a polished reply.
     </p>
     <button class="pro-btn" onclick="goPro()">Upgrade to Pro — $9.90/month</button>
   </section>
 
   <main class="card">
-    <textarea id="userInput" placeholder="输入中文或其他语言内容，我会自动翻译成英文回复..."></textarea>
+    <textarea
+      id="userInput"
+      oninput="autoTranslate()"
+      placeholder="输入中文或其他语言内容，停止输入后会自动翻译成英文回复..."
+    ></textarea>
 
     <div class="controls">
-      <select id="tone">
+      <select id="tone" onchange="generateReply()">
         <option value="professional">Professional</option>
         <option value="friendly">Friendly</option>
         <option value="short">Short</option>
@@ -190,11 +190,11 @@
         <option value="confident">Confident</option>
       </select>
 
-      <button class="generate-btn" onclick="generateReply()">Translate & Generate Reply</button>
+      <button class="generate-btn" onclick="generateReply()">Generate Now</button>
     </div>
 
     <div id="output" class="output">
-      Your translated reply will appear here.
+      Your translated reply will appear here automatically.
     </div>
 
     <button id="copyBtn" class="copy-btn" onclick="copyReply()">Copy Reply</button>
@@ -203,12 +203,12 @@
   <section class="features">
     <div class="feature">
       <h3>Auto Translation</h3>
-      <p>Translate Chinese or other languages into clear English automatically.</p>
+      <p>Type your message and FluentReply automatically translates it into English.</p>
     </div>
 
     <div class="feature">
       <h3>Better Replies</h3>
-      <p>Generate professional, friendly, polite, short, or confident English replies.</p>
+      <p>Choose professional, friendly, polite, short, or confident reply styles.</p>
     </div>
 
     <div class="feature">
@@ -225,6 +225,10 @@
     const PAYMENT_LINK = "https://buy.stripe.com/test_7sY28t1xF9fe7qb7iY83C00";
     const FREE_LIMIT = 100;
 
+    let typingTimer;
+    let lastInput = "";
+    let isGenerating = false;
+
     function goPro() {
       window.location.href = PAYMENT_LINK;
     }
@@ -237,17 +241,28 @@
       localStorage.setItem("fluentreply_usage", String(count));
     }
 
+    function autoTranslate() {
+      clearTimeout(typingTimer);
+
+      typingTimer = setTimeout(() => {
+        const input = document.getElementById("userInput").value.trim();
+
+        if (input.length >= 2 && input !== lastInput) {
+          generateReply();
+        }
+      }, 1000);
+    }
+
     async function translateToEnglish(text) {
       const url =
-        "https://api.mymemory.translated.net/get?q=" +
-        encodeURIComponent(text) +
-        "&langpair=auto|en";
+        "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=" +
+        encodeURIComponent(text);
 
       const response = await fetch(url);
       const data = await response.json();
 
-      if (data && data.responseData && data.responseData.translatedText) {
-        return data.responseData.translatedText;
+      if (data && data[0]) {
+        return data[0].map(item => item[0]).join("");
       }
 
       throw new Error("Translation failed");
@@ -278,6 +293,8 @@
     }
 
     async function generateReply() {
+      if (isGenerating) return;
+
       const input = document.getElementById("userInput").value.trim();
       const tone = document.getElementById("tone").value;
       const output = document.getElementById("output");
@@ -299,19 +316,23 @@
         return;
       }
 
-      output.textContent = "Translating and generating reply...";
-
       try {
+        isGenerating = true;
+        output.textContent = "Translating automatically...";
+
         const translatedText = await translateToEnglish(input);
         const finalReply = polishReply(translatedText, tone);
 
         usage++;
         setUsageCount(usage);
+        lastInput = input;
 
         output.textContent = finalReply;
         copyBtn.style.display = "inline-block";
       } catch (error) {
         output.textContent = "Translation failed. Please try again.";
+      } finally {
+        isGenerating = false;
       }
     }
 
