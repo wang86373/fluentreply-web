@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FluentReply - AI Reply Assistant</title>
+  <title>FluentReply - Auto Translator</title>
 
   <style>
     * { box-sizing: border-box; }
@@ -28,8 +28,6 @@
       color: #2563eb;
     }
 
-    button { font-size: 15px; }
-
     .pro-btn {
       background: #2563eb;
       color: white;
@@ -38,15 +36,16 @@
       border-radius: 12px;
       cursor: pointer;
       font-weight: 600;
+      font-size: 15px;
     }
 
     .hero {
-      padding: 40px 8% 20px;
+      padding: 35px 8% 20px;
       text-align: center;
     }
 
     .hero h1 {
-      font-size: 48px;
+      font-size: 46px;
       line-height: 1.1;
       margin-bottom: 16px;
     }
@@ -54,7 +53,7 @@
     .hero p {
       font-size: 18px;
       color: #6b7280;
-      max-width: 700px;
+      max-width: 720px;
       margin: 0 auto 28px;
     }
 
@@ -69,63 +68,67 @@
 
     textarea {
       width: 100%;
-      min-height: 150px;
+      min-height: 160px;
       padding: 18px;
-      font-size: 16px;
+      font-size: 18px;
       border-radius: 16px;
       border: 1px solid #d1d5db;
       resize: vertical;
       outline: none;
+      line-height: 1.6;
     }
 
-    textarea:focus { border-color: #2563eb; }
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
 
     .controls {
+      margin-top: 16px;
       display: flex;
+      justify-content: space-between;
+      align-items: center;
       gap: 12px;
-      margin-top: 18px;
       flex-wrap: wrap;
     }
 
     select {
-      padding: 12px;
+      padding: 12px 16px;
       border-radius: 12px;
       border: 1px solid #d1d5db;
       font-size: 15px;
+      background: white;
     }
 
-    .generate-btn {
-      background: #111827;
-      color: white;
-      border: none;
-      padding: 13px 22px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 700;
+    .status {
+      color: #6b7280;
+      font-size: 14px;
     }
 
     .output {
-      margin-top: 24px;
+      margin-top: 22px;
       background: #f9fafb;
       border-radius: 16px;
-      padding: 20px;
-      min-height: 100px;
+      padding: 22px;
+      min-height: 110px;
       white-space: pre-wrap;
       color: #111827;
       border: 1px solid #e5e7eb;
-      line-height: 1.6;
+      line-height: 1.7;
+      font-size: 18px;
     }
 
     .copy-btn {
-      margin-top: 12px;
+      margin-top: 14px;
       background: #10b981;
       color: white;
       border: none;
-      padding: 10px 16px;
+      padding: 11px 18px;
       border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
       display: none;
+      font-size: 15px;
     }
 
     .features {
@@ -144,6 +147,15 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.06);
     }
 
+    .feature h3 {
+      margin-top: 0;
+    }
+
+    .feature p {
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
     footer {
       text-align: center;
       padding: 40px 20px;
@@ -152,9 +164,23 @@
     }
 
     @media (max-width: 600px) {
-      .hero h1 { font-size: 34px; }
-      header { padding: 20px; }
-      .card { margin: 20px; padding: 22px; }
+      header {
+        padding: 20px;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .card {
+        margin: 20px;
+        padding: 22px;
+      }
+
+      textarea,
+      .output {
+        font-size: 16px;
+      }
     }
   </style>
 </head>
@@ -166,10 +192,10 @@
   </header>
 
   <section class="hero">
-    <h1>Translate & Write Better Replies<br />in Seconds</h1>
+    <h1>Translate into Natural English<br />Automatically</h1>
     <p>
-      FluentReply automatically translates your message into English and turns it into
-      a polished reply.
+      Type your message in Chinese or any language. FluentReply will automatically
+      translate it into clear, natural English.
     </p>
     <button class="pro-btn" onclick="goPro()">Upgrade to Pro — $9.90/month</button>
   </section>
@@ -178,42 +204,42 @@
     <textarea
       id="userInput"
       oninput="autoTranslate()"
-      placeholder="输入中文或其他语言内容，停止输入后会自动翻译成英文回复..."
+      placeholder="输入中文或其他语言内容，停止输入后会自动翻译成自然英文..."
     ></textarea>
 
     <div class="controls">
       <select id="tone" onchange="generateReply()">
+        <option value="natural">Natural English</option>
         <option value="professional">Professional</option>
         <option value="friendly">Friendly</option>
         <option value="short">Short</option>
         <option value="polite">Polite</option>
-        <option value="confident">Confident</option>
       </select>
 
-      <button class="generate-btn" onclick="generateReply()">Generate Now</button>
+      <div id="status" class="status">Automatic translation is ready.</div>
     </div>
 
     <div id="output" class="output">
-      Your translated reply will appear here automatically.
+      Your English translation will appear here automatically.
     </div>
 
-    <button id="copyBtn" class="copy-btn" onclick="copyReply()">Copy Reply</button>
+    <button id="copyBtn" class="copy-btn" onclick="copyReply()">Copy Translation</button>
   </main>
 
   <section class="features">
     <div class="feature">
       <h3>Auto Translation</h3>
-      <p>Type your message and FluentReply automatically translates it into English.</p>
+      <p>Stop typing for one second and your English translation appears automatically.</p>
     </div>
 
     <div class="feature">
-      <h3>Better Replies</h3>
-      <p>Choose professional, friendly, polite, short, or confident reply styles.</p>
+      <h3>Natural English</h3>
+      <p>Translate into clear, simple, natural English without awkward extra sentences.</p>
     </div>
 
     <div class="feature">
       <h3>Pro Access</h3>
-      <p>Upgrade to Pro for more usage and premium reply styles.</p>
+      <p>Upgrade to Pro for higher usage and premium features.</p>
     </div>
   </section>
 
@@ -250,6 +276,15 @@
         if (input.length >= 2 && input !== lastInput) {
           generateReply();
         }
+
+        if (!input) {
+          document.getElementById("output").textContent =
+            "Your English translation will appear here automatically.";
+          document.getElementById("copyBtn").style.display = "none";
+          document.getElementById("status").textContent =
+            "Automatic translation is ready.";
+          lastInput = "";
+        }
       }, 1000);
     }
 
@@ -268,13 +303,19 @@
       throw new Error("Translation failed");
     }
 
-    function polishReply(translatedText, tone) {
+    function polishTranslation(translatedText, tone) {
+      if (tone === "natural") {
+        return translatedText;
+      }
+
       if (tone === "professional") {
-        return `Thank you for your message. ${translatedText}`;
+        return translatedText
+          .replace(/\bhi\b/gi, "Hello")
+          .replace(/\bokay\b/gi, "Understood");
       }
 
       if (tone === "friendly") {
-        return `Thanks for your message! ${translatedText}`;
+        return translatedText;
       }
 
       if (tone === "short") {
@@ -282,11 +323,7 @@
       }
 
       if (tone === "polite") {
-        return `Thank you very much for your message. ${translatedText}`;
-      }
-
-      if (tone === "confident") {
-        return `I understand. ${translatedText}`;
+        return translatedText;
       }
 
       return translatedText;
@@ -299,11 +336,13 @@
       const tone = document.getElementById("tone").value;
       const output = document.getElementById("output");
       const copyBtn = document.getElementById("copyBtn");
+      const status = document.getElementById("status");
 
       copyBtn.style.display = "none";
 
       if (!input) {
-        output.textContent = "Please enter a message first.";
+        output.textContent = "Your English translation will appear here automatically.";
+        status.textContent = "Automatic translation is ready.";
         return;
       }
 
@@ -313,24 +352,28 @@
         output.innerHTML =
           'You have reached the free limit. Please upgrade to Pro.<br><br>' +
           '<button class="pro-btn" onclick="goPro()">Upgrade Pro</button>';
+        status.textContent = "Free limit reached.";
         return;
       }
 
       try {
         isGenerating = true;
+        status.textContent = "Translating...";
         output.textContent = "Translating automatically...";
 
         const translatedText = await translateToEnglish(input);
-        const finalReply = polishReply(translatedText, tone);
+        const finalText = polishTranslation(translatedText, tone);
 
         usage++;
         setUsageCount(usage);
         lastInput = input;
 
-        output.textContent = finalReply;
+        output.textContent = finalText;
         copyBtn.style.display = "inline-block";
+        status.textContent = "Translation complete.";
       } catch (error) {
         output.textContent = "Translation failed. Please try again.";
+        status.textContent = "Translation failed.";
       } finally {
         isGenerating = false;
       }
@@ -339,7 +382,7 @@
     function copyReply() {
       const text = document.getElementById("output").textContent;
       navigator.clipboard.writeText(text);
-      alert("Reply copied!");
+      alert("Translation copied!");
     }
   </script>
 </body>
