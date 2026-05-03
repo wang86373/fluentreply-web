@@ -51,24 +51,6 @@ h1 {
   color: #6b7280;
 }
 
-.status {
-  margin: 16px 0;
-  padding: 12px;
-  border-radius: 14px;
-  background: #f3f4f6;
-  font-weight: bold;
-}
-
-.status.pro {
-  background: #ecfdf5;
-  color: #047857;
-}
-
-.status.limit {
-  background: #fef2f2;
-  color: #b91c1c;
-}
-
 textarea {
   width: 100%;
   height: 150px;
@@ -151,17 +133,6 @@ textarea:focus {
   line-height: 1.6;
   min-height: 50px;
 }
-
-@media (max-width: 700px) {
-  .app {
-    margin: 20px;
-    padding: 22px;
-  }
-
-  h1 {
-    font-size: 28px;
-  }
-}
 </style>
 </head>
 
@@ -176,9 +147,7 @@ textarea:focus {
     </div>
   </div>
 
-  <div id="status" class="status">免费版：每天10次</div>
-
-  <textarea id="input" placeholder="输入你想表达的话，例如：我现在准备和同事去吃午餐。"></textarea>
+  <textarea id="input" placeholder="输入你想表达的话..."></textarea>
 
   <div class="styles">
     <button class="style active" onclick="setStyle('Professional', this)">Professional</button>
@@ -197,7 +166,9 @@ textarea:focus {
     <div id="output">✨ 输入内容后会自动生成结果</div>
   </div>
 
-  <button id="upgradeBtn" class="upgrade" onclick="goUpgrade()">升级 Pro $9.90/月</button>
+  <button id="upgradeBtn" class="upgrade" onclick="goUpgrade()" style="display:none;">
+    升级 Pro $9.90/月
+  </button>
 </div>
 
 <script>
@@ -206,6 +177,7 @@ const API_URL = "https://fluentreply-api-7t7d.onrender.com";
 let selectedStyle = "Professional";
 let timer;
 
+// 自动识别支付成功
 if (new URLSearchParams(window.location.search).get("success") === "true") {
   localStorage.setItem("isPro", "true");
 }
@@ -213,17 +185,6 @@ if (new URLSearchParams(window.location.search).get("success") === "true") {
 function isPro() {
   return localStorage.getItem("isPro") === "true";
 }
-
-function updateProStatus() {
-  if (isPro()) {
-    const status = document.getElementById("status");
-    status.innerText = "✅ Pro 已解锁：无限使用";
-    status.className = "status pro";
-    document.getElementById("upgradeBtn").style.display = "none";
-  }
-}
-
-updateProStatus();
 
 function setStyle(style, button) {
   selectedStyle = style;
@@ -234,8 +195,7 @@ function setStyle(style, button) {
 
   button.classList.add("active");
 
-  const text = document.getElementById("input").value.trim();
-  if (text) autoGenerate();
+  autoGenerate();
 }
 
 document.getElementById("input").addEventListener("input", autoGenerate);
@@ -276,15 +236,7 @@ async function generate(text) {
     output.innerText = data.result || "无返回结果";
 
     if (data.limit) {
-      const status = document.getElementById("status");
-      status.innerText = "🚫 今日免费10次已用完，请升级 Pro";
-      status.className = "status limit";
       document.getElementById("upgradeBtn").style.display = "block";
-      return;
-    }
-
-    if (!isPro() && data.remaining !== undefined) {
-      document.getElementById("status").innerText = "免费剩余次数：" + data.remaining;
     }
 
   } catch (err) {
@@ -305,6 +257,7 @@ async function goUpgrade() {
     } else {
       alert("支付失败：" + (data.error || "未知错误"));
     }
+
   } catch (err) {
     alert("请求失败：" + err.message);
   }
