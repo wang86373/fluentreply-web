@@ -1,274 +1,282 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>FluentReply</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FluentReply - AI Reply Assistant</title>
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #f6f8ff, #eef7f2);
-  color: #1f2937;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-.app {
-  max-width: 760px;
-  margin: 60px auto;
-  padding: 32px;
-  background: white;
-  border-radius: 24px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.08);
-}
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(135deg, #f8fbff, #eef3ff);
+      color: #111827;
+    }
 
-.header {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  margin-bottom: 24px;
-}
+    header {
+      padding: 24px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-.logo {
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
-  background: #2563eb;
-  color: white;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #2563eb;
+    }
 
-h1 {
-  margin: 0;
-  font-size: 34px;
-}
+    .pro-btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: 600;
+    }
 
-.subtitle {
-  margin: 6px 0 0;
-  color: #6b7280;
-}
+    .hero {
+      padding: 40px 8% 20px;
+      text-align: center;
+    }
 
-textarea {
-  width: 100%;
-  height: 150px;
-  box-sizing: border-box;
-  padding: 16px;
-  font-size: 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 16px;
-  resize: vertical;
-  outline: none;
-}
+    .hero h1 {
+      font-size: 48px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
 
-textarea:focus {
-  border-color: #2563eb;
-}
+    .hero p {
+      font-size: 18px;
+      color: #6b7280;
+      max-width: 700px;
+      margin: 0 auto 28px;
+    }
 
-.styles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 18px 0;
-}
+    .card {
+      max-width: 900px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(37, 99, 235, 0.12);
+      padding: 32px;
+    }
 
-.style {
-  border: 1px solid #d1d5db;
-  background: white;
-  border-radius: 999px;
-  padding: 10px 14px;
-  cursor: pointer;
-}
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 18px;
+      font-size: 16px;
+      border-radius: 16px;
+      border: 1px solid #d1d5db;
+      resize: vertical;
+      outline: none;
+    }
 
-.style.active {
-  background: #2563eb;
-  color: white;
-  border-color: #2563eb;
-}
+    textarea:focus {
+      border-color: #2563eb;
+    }
 
-.output-card {
-  margin-top: 24px;
-  padding: 20px;
-  border-radius: 18px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-}
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
 
-.output-title {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-weight: bold;
-}
+    select,
+    button {
+      font-size: 15px;
+    }
 
-.copy {
-  border: none;
-  background: #111827;
-  color: white;
-  border-radius: 10px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
+    select {
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+    }
 
-.upgrade {
-  width: 100%;
-  margin-top: 18px;
-  padding: 15px;
-  border: none;
-  border-radius: 16px;
-  background: #635bff;
-  color: white;
-  font-size: 17px;
-  cursor: pointer;
-}
+    .generate-btn {
+      background: #111827;
+      color: white;
+      border: none;
+      padding: 13px 22px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
 
-.upgrade:hover {
-  background: #5147e0;
-}
+    .output {
+      margin-top: 24px;
+      background: #f9fafb;
+      border-radius: 16px;
+      padding: 20px;
+      min-height: 100px;
+      white-space: pre-wrap;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+    }
 
-#output {
-  white-space: pre-wrap;
-  line-height: 1.6;
-  min-height: 50px;
-}
-</style>
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 8%;
+    }
+
+    .feature {
+      background: white;
+      padding: 24px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    .feature h3 {
+      margin-top: 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      header {
+        padding: 20px;
+      }
+
+      .card {
+        margin: 20px;
+        padding: 22px;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <header>
+    <div class="logo">FluentReply</div>
+    <button class="pro-btn" onclick="goPro()">Upgrade Pro</button>
+  </header>
 
-<div class="app">
-  <div class="header">
-    <div class="logo">FR</div>
-    <div>
-      <h1>FluentReply</h1>
-      <p class="subtitle">把中文或简单英文变成自然的美式英语</p>
+  <section class="hero">
+    <h1>Write Better Replies<br />in Seconds</h1>
+    <p>
+      FluentReply helps you turn simple thoughts into clear, polished,
+      professional English replies instantly.
+    </p>
+    <button class="pro-btn" onclick="goPro()">Upgrade to Pro — $9.90/month</button>
+  </section>
+
+  <main class="card">
+    <textarea id="userInput" placeholder="Paste or type the message you want to reply to..."></textarea>
+
+    <div class="controls">
+      <select id="tone">
+        <option value="professional">Professional</option>
+        <option value="friendly">Friendly</option>
+        <option value="short">Short</option>
+        <option value="polite">Polite</option>
+        <option value="confident">Confident</option>
+      </select>
+
+      <button class="generate-btn" onclick="generateReply()">Generate Reply</button>
     </div>
-  </div>
 
-  <textarea id="input" placeholder="输入你想表达的话..."></textarea>
-
-  <div class="styles">
-    <button class="style active" onclick="setStyle('Professional', this)">Professional</button>
-    <button class="style" onclick="setStyle('Casual', this)">Casual</button>
-    <button class="style" onclick="setStyle('Friendly', this)">Friendly</button>
-    <button class="style" onclick="setStyle('Confident', this)">Confident</button>
-    <button class="style" onclick="setStyle('Romantic', this)">Romantic</button>
-    <button class="style" onclick="setStyle('Business', this)">Business</button>
-  </div>
-
-  <div class="output-card">
-    <div class="output-title">
-      <span>Result</span>
-      <button class="copy" onclick="copyResult()">Copy</button>
+    <div id="output" class="output">
+      Your AI reply will appear here.
     </div>
-    <div id="output">✨ 输入内容后会自动生成结果</div>
-  </div>
+  </main>
 
-  <button id="upgradeBtn" class="upgrade" onclick="goUpgrade()" style="display:none;">
-    升级 Pro $9.90/月
-  </button>
-</div>
+  <section class="features">
+    <div class="feature">
+      <h3>Fast Replies</h3>
+      <p>Create polished responses instantly for work, business, dating, customer messages, and daily conversations.</p>
+    </div>
 
-<script>
-const API_URL = "https://fluentreply-api-7t7d.onrender.com";
+    <div class="feature">
+      <h3>Multiple Tones</h3>
+      <p>Choose professional, friendly, polite, confident, or short reply styles.</p>
+    </div>
 
-let selectedStyle = "Professional";
-let timer;
+    <div class="feature">
+      <h3>Pro Access</h3>
+      <p>Upgrade to Pro for unlimited replies and premium features.</p>
+    </div>
+  </section>
 
-// 自动识别支付成功
-if (new URLSearchParams(window.location.search).get("success") === "true") {
-  localStorage.setItem("isPro", "true");
-}
+  <footer>
+    © 2026 FluentReply. All rights reserved.
+  </footer>
 
-function isPro() {
-  return localStorage.getItem("isPro") === "true";
-}
+  <script>
+    const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_7sY28t1xF9fe7qb7iY83C00";
 
-function setStyle(style, button) {
-  selectedStyle = style;
+    const FREE_LIMIT = 100;
 
-  document.querySelectorAll(".style").forEach(btn => {
-    btn.classList.remove("active");
-  });
-
-  button.classList.add("active");
-
-  autoGenerate();
-}
-
-document.getElementById("input").addEventListener("input", autoGenerate);
-
-function autoGenerate() {
-  clearTimeout(timer);
-
-  const text = document.getElementById("input").value.trim();
-
-  if (!text) {
-    document.getElementById("output").innerText = "✨ 输入内容后会自动生成结果";
-    return;
-  }
-
-  timer = setTimeout(() => {
-    generate(text);
-  }, 800);
-}
-
-async function generate(text) {
-  const output = document.getElementById("output");
-  output.innerText = "✨ 正在优化表达...";
-
-  try {
-    const res = await fetch(`${API_URL}/api/generate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        text: `${selectedStyle} style: ${text}`,
-        pro: isPro()
-      })
-    });
-
-    const data = await res.json();
-
-    output.innerText = data.result || "无返回结果";
-
-    if (data.limit) {
-      document.getElementById("upgradeBtn").style.display = "block";
+    function goPro() {
+      window.location.href = STRIPE_PAYMENT_LINK;
     }
 
-  } catch (err) {
-    output.innerText = "请求失败：" + err.message;
-  }
-}
-
-async function goUpgrade() {
-  try {
-    const res = await fetch(`${API_URL}/api/checkout`, {
-      method: "POST"
-    });
-
-    const data = await res.json();
-
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      alert("支付失败：" + (data.error || "未知错误"));
+    function getUsageCount() {
+      return Number(localStorage.getItem("fluentreply_usage") || "0");
     }
 
-  } catch (err) {
-    alert("请求失败：" + err.message);
-  }
-}
+    function setUsageCount(count) {
+      localStorage.setItem("fluentreply_usage", String(count));
+    }
 
-function copyResult() {
-  const text = document.getElementById("output").innerText;
-  navigator.clipboard.writeText(text);
-  alert("已复制");
-}
-</script>
+    function generateReply() {
+      const input = document.getElementById("userInput").value.trim();
+      const tone = document.getElementById("tone").value;
+      const output = document.getElementById("output");
 
+      if (!input) {
+        output.textContent = "Please enter a message first.";
+        return;
+      }
+
+      let usage = getUsageCount();
+
+      if (usage >= FREE_LIMIT) {
+        output.innerHTML =
+          'You have reached the free limit. Please upgrade to Pro.<br><br>' +
+          '<button class="pro-btn" onclick="goPro()">Upgrade Pro</button>';
+        return;
+      }
+
+      usage++;
+      setUsageCount(usage);
+
+      let reply = "";
+
+      if (tone === "professional") {
+        reply = `Thank you for your message. I appreciate you reaching out. I will review this carefully and get back to you with a clear response as soon as possible.`;
+      } else if (tone === "friendly") {
+        reply = `Thanks for your message! I really appreciate it. I’ll take a look and get back to you soon.`;
+      } else if (tone === "short") {
+        reply = `Thanks. I’ll check and get back to you soon.`;
+      } else if (tone === "polite") {
+        reply = `Thank you very much for your message. I appreciate your time and will respond as soon as I can.`;
+      } else if (tone === "confident") {
+        reply = `Thanks for reaching out. I understand the situation and will handle this clearly and efficiently.`;
+      }
+
+      output.textContent = reply;
+    }
+  </script>
 </body>
 </html>
