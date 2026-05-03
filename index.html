@@ -3,249 +3,104 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FluentReply - Auto Translator</title>
-
+  <title>FluentReply Translator</title>
   <style>
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Inter, Arial, sans-serif;
-      background: linear-gradient(135deg, #f8fbff, #eef3ff);
-      color: #111827;
-    }
-
-    header {
-      padding: 24px 8%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-size: 24px;
-      font-weight: 800;
-      color: #2563eb;
-    }
-
-    .pro-btn {
-      background: #2563eb;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 15px;
-    }
-
-    .hero {
-      padding: 35px 8% 20px;
-      text-align: center;
-    }
-
-    .hero h1 {
-      font-size: 46px;
-      line-height: 1.1;
-      margin-bottom: 16px;
-    }
-
-    .hero p {
-      font-size: 18px;
-      color: #6b7280;
-      max-width: 720px;
-      margin: 0 auto 28px;
-    }
-
-    .card {
-      max-width: 900px;
-      margin: 30px auto;
-      background: white;
-      border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(37, 99, 235, 0.12);
-      padding: 32px;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 160px;
-      padding: 18px;
-      font-size: 18px;
-      border-radius: 16px;
-      border: 1px solid #d1d5db;
-      resize: vertical;
-      outline: none;
-      line-height: 1.6;
-    }
-
-    textarea:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-    }
-
-    .controls {
-      margin-top: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    select {
-      padding: 12px 16px;
-      border-radius: 12px;
-      border: 1px solid #d1d5db;
-      font-size: 15px;
-      background: white;
-    }
-
-    .status {
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    .output {
-      margin-top: 22px;
-      background: #f9fafb;
-      border-radius: 16px;
-      padding: 22px;
-      min-height: 110px;
-      white-space: pre-wrap;
-      color: #111827;
-      border: 1px solid #e5e7eb;
-      line-height: 1.7;
-      font-size: 18px;
-    }
-
-    .copy-btn {
-      margin-top: 14px;
-      background: #10b981;
-      color: white;
-      border: none;
-      padding: 11px 18px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      display: none;
-      font-size: 15px;
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 0 8%;
-    }
-
-    .feature {
-      background: white;
-      padding: 24px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-    }
-
-    .feature h3 {
-      margin-top: 0;
-    }
-
-    .feature p {
-      color: #6b7280;
-      line-height: 1.6;
-    }
-
-    footer {
-      text-align: center;
-      padding: 40px 20px;
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    @media (max-width: 600px) {
-      header {
-        padding: 20px;
-      }
-
-      .hero h1 {
-        font-size: 34px;
-      }
-
-      .card {
-        margin: 20px;
-        padding: 22px;
-      }
-
-      textarea,
-      .output {
-        font-size: 16px;
-      }
+    body { margin: 0; font-family: Arial, sans-serif; background: #fff; color: #202124; }
+    header { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; border-bottom: 1px solid #e5e7eb; }
+    .logo { font-size: 24px; font-weight: 600; color: #1a73e8; }
+    .upgrade-btn { background: #1a73e8; color: white; border: none; border-radius: 24px; padding: 10px 18px; cursor: pointer; font-weight: 600; }
+    .page { max-width: 1280px; margin: 34px auto; padding: 0 24px; }
+    .tabs { display: flex; gap: 12px; margin-bottom: 22px; }
+    .tab { border: 1px solid #dadce0; background: white; color: #1a73e8; border-radius: 22px; padding: 10px 20px; font-weight: 600; }
+    .tab.active { background: #e8f0fe; }
+    .translator { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .panel { border: 1px solid #dadce0; border-radius: 16px; overflow: hidden; min-height: 280px; }
+    .panel-header { height: 54px; display: flex; align-items: center; gap: 18px; padding: 0 20px; border-bottom: 1px solid #e5e7eb; color: #5f6368; font-weight: 600; }
+    .active-lang { color: #1a73e8; }
+    textarea { width: 100%; height: 210px; border: none; outline: none; resize: none; padding: 24px; font-size: 30px; line-height: 1.35; font-family: Arial, sans-serif; }
+    .result-box { background: #f1f5ff; min-height: 210px; padding: 24px; font-size: 30px; line-height: 1.35; white-space: pre-wrap; }
+    .result-placeholder { color: #6b7280; font-size: 22px; }
+    .panel-footer { height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; color: #5f6368; border-top: 1px solid #e5e7eb; }
+    .icon-btn { border: none; background: transparent; color: #5f6368; font-size: 16px; cursor: pointer; padding: 8px; }
+    .suggestions { margin-top: 20px; display: none; }
+    .suggestions-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+    .suggestion-list { display: grid; gap: 10px; }
+    .suggestion { border: 1px solid #dadce0; border-radius: 12px; padding: 16px 18px; cursor: pointer; background: white; display: flex; justify-content: space-between; gap: 14px; align-items: center; }
+    .suggestion:hover, .suggestion.selected { background: #e8f0fe; border-color: #1a73e8; }
+    .suggestion-text { font-size: 18px; line-height: 1.5; }
+    .suggestion-tag { font-size: 13px; color: #5f6368; white-space: nowrap; }
+    .bottom-actions { margin-top: 18px; display: flex; gap: 12px; }
+    .copy-main { background: #1a73e8; color: white; border: none; border-radius: 20px; padding: 11px 18px; cursor: pointer; font-weight: 600; display: none; }
+    .clear-btn { background: white; color: #5f6368; border: 1px solid #dadce0; border-radius: 20px; padding: 11px 18px; cursor: pointer; font-weight: 600; }
+    footer { text-align: center; padding: 40px 20px; color: #6b7280; font-size: 14px; }
+    @media (max-width: 850px) {
+      .translator { grid-template-columns: 1fr; }
+      textarea, .result-box { font-size: 24px; }
+      .page { padding: 0 14px; }
     }
   </style>
 </head>
 
 <body>
   <header>
-    <div class="logo">FluentReply</div>
-    <button class="pro-btn" onclick="goPro()">Upgrade Pro</button>
+    <div class="logo">FluentReply 翻译</div>
+    <button class="upgrade-btn" onclick="goPro()">Upgrade Pro</button>
   </header>
 
-  <section class="hero">
-    <h1>Translate into Natural English<br />Automatically</h1>
-    <p>
-      Type your message in Chinese or any language. FluentReply will automatically
-      translate it into clear, natural English.
-    </p>
-    <button class="pro-btn" onclick="goPro()">Upgrade to Pro — $9.90/month</button>
-  </section>
-
-  <main class="card">
-    <textarea
-      id="userInput"
-      oninput="autoTranslate()"
-      placeholder="输入中文或其他语言内容，停止输入后会自动翻译成自然英文..."
-    ></textarea>
-
-    <div class="controls">
-      <select id="tone" onchange="generateReply()">
-        <option value="natural">Natural English</option>
-        <option value="professional">Professional</option>
-        <option value="friendly">Friendly</option>
-        <option value="short">Short</option>
-        <option value="polite">Polite</option>
-      </select>
-
-      <div id="status" class="status">Automatic translation is ready.</div>
+  <main class="page">
+    <div class="tabs">
+      <button class="tab active">文字</button>
+      <button class="tab">自动翻译</button>
+      <button class="tab">多种表达</button>
     </div>
 
-    <div id="output" class="output">
-      Your English translation will appear here automatically.
-    </div>
+    <section class="translator">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="active-lang">检测到的语言</span>
+          <span>中文</span>
+          <span>英语</span>
+        </div>
 
-    <button id="copyBtn" class="copy-btn" onclick="copyReply()">Copy Translation</button>
+        <textarea id="inputText" oninput="autoTranslate()" placeholder="请输入中文或其他语言..."></textarea>
+
+        <div class="panel-footer">
+          <span id="charCount">0</span>
+          <button class="icon-btn" onclick="clearText()">✕</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="active-lang">英语</span>
+          <span>中文</span>
+          <span>日语</span>
+        </div>
+
+        <div id="resultText" class="result-box">
+          <span class="result-placeholder">英文翻译会自动显示在这里</span>
+        </div>
+
+        <div class="panel-footer">
+          <span id="status">准备自动翻译</span>
+          <button class="icon-btn" onclick="copyText()">复制</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="suggestions" class="suggestions">
+      <div class="suggestions-title">更多英文表达选择</div>
+      <div id="suggestionList" class="suggestion-list"></div>
+    </section>
+
+    <div class="bottom-actions">
+      <button id="copyMainBtn" class="copy-main" onclick="copyText()">Copy Translation</button>
+      <button class="clear-btn" onclick="clearText()">Clear</button>
+    </div>
   </main>
 
-  <section class="features">
-    <div class="feature">
-      <h3>Auto Translation</h3>
-      <p>Stop typing for one second and your English translation appears automatically.</p>
-    </div>
-
-    <div class="feature">
-      <h3>Natural English</h3>
-      <p>Translate into clear, simple, natural English without awkward extra sentences.</p>
-    </div>
-
-    <div class="feature">
-      <h3>Pro Access</h3>
-      <p>Upgrade to Pro for higher usage and premium features.</p>
-    </div>
-  </section>
-
-  <footer>
-    © 2026 FluentReply. All rights reserved.
-  </footer>
+  <footer>© 2026 FluentReply. All rights reserved.</footer>
 
   <script>
     const PAYMENT_LINK = "https://buy.stripe.com/test_7sY28t1xF9fe7qb7iY83C00";
@@ -253,7 +108,8 @@
 
     let typingTimer;
     let lastInput = "";
-    let isGenerating = false;
+    let currentResult = "";
+    let isTranslating = false;
 
     function goPro() {
       window.location.href = PAYMENT_LINK;
@@ -270,119 +126,152 @@
     function autoTranslate() {
       clearTimeout(typingTimer);
 
-      typingTimer = setTimeout(() => {
-        const input = document.getElementById("userInput").value.trim();
-
-        if (input.length >= 2 && input !== lastInput) {
-          generateReply();
-        }
-
-        if (!input) {
-          document.getElementById("output").textContent =
-            "Your English translation will appear here automatically.";
-          document.getElementById("copyBtn").style.display = "none";
-          document.getElementById("status").textContent =
-            "Automatic translation is ready.";
-          lastInput = "";
-        }
-      }, 1000);
-    }
-
-    async function translateToEnglish(text) {
-      const url =
-        "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=" +
-        encodeURIComponent(text);
-
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data && data[0]) {
-        return data[0].map(item => item[0]).join("");
-      }
-
-      throw new Error("Translation failed");
-    }
-
-    function polishTranslation(translatedText, tone) {
-      if (tone === "natural") {
-        return translatedText;
-      }
-
-      if (tone === "professional") {
-        return translatedText
-          .replace(/\bhi\b/gi, "Hello")
-          .replace(/\bokay\b/gi, "Understood");
-      }
-
-      if (tone === "friendly") {
-        return translatedText;
-      }
-
-      if (tone === "short") {
-        return translatedText;
-      }
-
-      if (tone === "polite") {
-        return translatedText;
-      }
-
-      return translatedText;
-    }
-
-    async function generateReply() {
-      if (isGenerating) return;
-
-      const input = document.getElementById("userInput").value.trim();
-      const tone = document.getElementById("tone").value;
-      const output = document.getElementById("output");
-      const copyBtn = document.getElementById("copyBtn");
-      const status = document.getElementById("status");
-
-      copyBtn.style.display = "none";
+      const input = document.getElementById("inputText").value.trim();
+      document.getElementById("charCount").textContent = input.length;
 
       if (!input) {
-        output.textContent = "Your English translation will appear here automatically.";
-        status.textContent = "Automatic translation is ready.";
+        clearResultOnly();
         return;
       }
+
+      typingTimer = setTimeout(() => {
+        if (input.length >= 2 && input !== lastInput) {
+          translateNow();
+        }
+      }, 900);
+    }
+
+    async function translateNow() {
+      if (isTranslating) return;
+
+      const input = document.getElementById("inputText").value.trim();
+      const resultBox = document.getElementById("resultText");
+      const status = document.getElementById("status");
+
+      if (!input) return;
 
       let usage = getUsageCount();
 
       if (usage >= FREE_LIMIT) {
-        output.innerHTML =
-          'You have reached the free limit. Please upgrade to Pro.<br><br>' +
-          '<button class="pro-btn" onclick="goPro()">Upgrade Pro</button>';
-        status.textContent = "Free limit reached.";
+        resultBox.textContent = "You have reached the free limit. Please upgrade to Pro.";
+        status.textContent = "免费次数已用完";
         return;
       }
 
       try {
-        isGenerating = true;
-        status.textContent = "Translating...";
-        output.textContent = "Translating automatically...";
+        isTranslating = true;
+        status.textContent = "正在使用 AI 翻译...";
+        resultBox.textContent = "Translating...";
 
-        const translatedText = await translateToEnglish(input);
-        const finalText = polishTranslation(translatedText, tone);
+        const aiResult = await callAITranslate(input);
 
         usage++;
         setUsageCount(usage);
+
+        currentResult = aiResult.main;
         lastInput = input;
 
-        output.textContent = finalText;
-        copyBtn.style.display = "inline-block";
-        status.textContent = "Translation complete.";
+        resultBox.textContent = aiResult.main;
+        status.textContent = "翻译完成";
+        document.getElementById("copyMainBtn").style.display = "inline-block";
+
+        showAISuggestions(aiResult.options);
       } catch (error) {
-        output.textContent = "Translation failed. Please try again.";
-        status.textContent = "Translation failed.";
+        resultBox.textContent = "Translation failed. Please try again.";
+        status.textContent = "翻译失败";
       } finally {
-        isGenerating = false;
+        isTranslating = false;
       }
     }
 
-    function copyReply() {
-      const text = document.getElementById("output").textContent;
-      navigator.clipboard.writeText(text);
-      alert("Translation copied!");
+    async function callAITranslate(text) {
+      const response = await fetch("/.netlify/functions/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Translation failed");
+      }
+
+      return data;
+    }
+
+    function showAISuggestions(options) {
+      const section = document.getElementById("suggestions");
+      const list = document.getElementById("suggestionList");
+
+      list.innerHTML = "";
+
+      options.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "suggestion" + (index === 0 ? " selected" : "");
+        div.onclick = () => selectSuggestion(item.text, div);
+
+        div.innerHTML = `
+          <div class="suggestion-text">${escapeHTML(item.text)}</div>
+          <div class="suggestion-tag">${escapeHTML(item.label)}</div>
+        `;
+
+        list.appendChild(div);
+      });
+
+      section.style.display = "block";
+    }
+
+    function selectSuggestion(text, element) {
+      currentResult = text;
+      document.getElementById("resultText").textContent = text;
+
+      document.querySelectorAll(".suggestion").forEach(item => {
+        item.classList.remove("selected");
+      });
+
+      element.classList.add("selected");
+      document.getElementById("status").textContent = "已选择表达";
+    }
+
+    function copyText() {
+      if (!currentResult) return;
+
+      navigator.clipboard.writeText(currentResult).then(() => {
+        document.getElementById("status").textContent = "已复制";
+      });
+    }
+
+    function clearText() {
+      document.getElementById("inputText").value = "";
+      document.getElementById("charCount").textContent = "0";
+      clearResultOnly();
+    }
+
+    function clearResultOnly() {
+      currentResult = "";
+      lastInput = "";
+
+      document.getElementById("resultText").innerHTML =
+        '<span class="result-placeholder">英文翻译会自动显示在这里</span>';
+
+      document.getElementById("status").textContent = "准备自动翻译";
+      document.getElementById("suggestions").style.display = "none";
+      document.getElementById("suggestionList").innerHTML = "";
+      document.getElementById("copyMainBtn").style.display = "none";
+    }
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>'"]/g, function(tag) {
+        const chars = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          "'": "&#39;",
+          '"': "&quot;"
+        };
+        return chars[tag] || tag;
+      });
     }
   </script>
 </body>
