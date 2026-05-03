@@ -7,25 +7,58 @@
 <style>
 body {
   font-family: Arial;
-  max-width: 600px;
+  max-width: 650px;
   margin: 50px auto;
   text-align: center;
   background: #f8f9fb;
 }
 
+h1 {
+  margin-bottom: 10px;
+}
+
 textarea {
   width: 100%;
   height: 120px;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
   border: 1px solid #ccc;
+  font-size: 16px;
 }
 
 #output {
   margin-top: 20px;
-  padding: 15px;
+  padding: 18px;
   background: white;
+  border-radius: 12px;
+  min-height: 40px;
+  text-align: left;
+}
+
+button {
+  margin-top: 18px;
+  padding: 12px 20px;
+  border: none;
   border-radius: 10px;
+  background: #635bff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #5147e0;
+}
+
+.pro {
+  margin-top: 10px;
+  color: green;
+  font-weight: bold;
+}
+
+.limit {
+  color: red;
+  margin-top: 10px;
 }
 </style>
 </head>
@@ -35,43 +68,100 @@ textarea {
 <h1>FluentReply</h1>
 <p>让你的英文更自然</p>
 
+<p id="status">免费版：每天10次</p>
+
 <textarea id="input" placeholder="输入中文或英文"></textarea>
 
 <div id="output"></div>
 
+<button id="upgradeBtn" onclick="goUpgrade()">升级 Pro $9.90/月</button>
+
 <script>
+const API_URL = "https://fluentreply-api-7t7d.onrender.com";
+
 let timer;
 
+// ✅ 支付成功识别
+if (new URLSearchParams(window.location.search).get("success") === "true") {
+  localStorage.setItem("isPro", "true");
+}
+
+// ✅ 判断是否Pro
+function isPro() {
+  return localStorage.getItem("isPro") === "true";
+}
+
+// ✅ 初始化状态
+if (isPro()) {
+  document.getElementById("status").innerText = "✅ Pro 已解锁：无限使用";
+  document.getElementById("status").className = "pro";
+  document.getElementById("upgradeBtn").style.display = "none";
+}
+
+// ✅ 自动翻译（停止输入800ms触发）
 document.getElementById("input").addEventListener("input", () => {
   clearTimeout(timer);
 
-  const text = document.getElementById("input").value;
-
+  const text = document.getElementById("input").value.trim();
   if (!text) return;
 
-  timer = setTimeout(async () => {
-    const output = document.getElementById("output");
-    output.innerText = "生成中...";
+  timer = setTimeout(() => {
+    generate(text);
+  }, 800);
+});
 
-    try {
-      const res = await fetch("https://fluentreply-api-7t7d.onrender.com/api/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ text })
-      });
+// ✅ 调用API
+async function generate(text) {
+  const output = document.getElementById("output");
+  output.innerText = "生成中...";
 
-      const data = await res.json();
+  try {
+    const res = await fetch(`${API_URL}/api/generate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ text })
+    });
 
-      output.innerText = data.result || "无返回结果";
+    const data = await res.json();
 
-    } catch (err) {
-      output.innerText = "请求失败：" + err.message;
+    output.innerText = data.result || "无返回结果";
+
+    // 👉 免费次数用完
+    if (data.limit) {
+      document.getElementById("status").innerText = "🚫 今日免费次数已用完";
+      document.getElementById("status").className = "limit";
+      document.getElementById("upgradeBtn").style.display = "inline-block";
+    } else if (!isPro() && data.remaining !== undefined) {
+      document.getElementById("status").innerText =
+        "免费剩余次数：" + data.remaining;
     }
 
-  }, 800); // 停止输入800ms自动翻译
-});
+  } catch (err) {
+    output.innerText = "请求失败：" + err.message;
+  }
+}
+
+// ✅ Stripe支付跳转
+async function goUpgrade() {
+  try {
+    const res = await fetch(`${API_URL}/api/checkout`, {
+      method: "POST"
+    });
+
+    const data = await res.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert("支付失败：" + (data.error || "未知错误"));
+    }
+
+  } catch (err) {
+    alert("请求失败：" + err.message);
+  }
+}
 </script>
 
 </body>
